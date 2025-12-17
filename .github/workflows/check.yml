@@ -1,0 +1,43 @@
+name: Entry window monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install requests beautifulsoup4
+
+      - name: Run checker
+        id: runcheck
+        run: |
+          set +e
+          python check_whm_spain.py
+          code=$?
+          echo "exit_code=$code" >> $GITHUB_OUTPUT
+          exit 0
+
+      - name: Commit state file
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add spain_status.json || true
+          git commit -m "Update state" || true
+          git push || true
+
+      - name: Notify via ntfy (phone push)
+        if: steps.runcheck.outputs.exit_code == '2'
+        run: |
+          curl -d "Spain status changed on WHM country caps page. Check: https://immi.homeaffairs.gov.au/what-we-do/whm-program/status-of-country-caps" \
+            "https://ntfy.sh/whm-spain-7f3a91c2b8d44c0aa1"
