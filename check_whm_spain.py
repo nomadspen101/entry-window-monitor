@@ -18,7 +18,7 @@ def fetch_status() -> str:
             raw = (tds[1] if len(tds) > 1 else "").lower()
             raw = re.sub(r"\s+", " ", raw).strip()
             if "paused" in raw:
-                return "TEST"
+                return "PAUSED"
             if "open" in raw:
                 return "OPEN"
             if "check ballot status" in raw:
