@@ -40,4 +40,4 @@ jobs:
         if: steps.runcheck.outputs.exit_code == '2'
         run: |
           curl -d "Spain status changed on WHM country caps page. Check: https://immi.homeaffairs.gov.au/what-we-do/whm-program/status-of-country-caps" \
-            "https://ntfy.sh/whm-spain-7f3a91c2b8d44c0aa1"
+            "https://ntfy.sh/whm-spain-7f3a91c2b8d44c0aa"
